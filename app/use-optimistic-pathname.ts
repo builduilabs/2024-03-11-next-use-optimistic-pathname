@@ -23,10 +23,10 @@ export default function useOptimisticPathname() {
 }
 
 let optimisticUrlState =
-  typeof window !== undefined ? window.location.pathname : undefined;
+  typeof window !== "undefined" ? window.location.pathname : undefined;
 let listeners: (() => void)[] = [];
 
-if (typeof window !== undefined) {
+if (typeof window !== "undefined") {
   window.addEventListener("popstate", () => {
     optimsticUrlStore.updateOptimisticUrl(location.pathname);
   });

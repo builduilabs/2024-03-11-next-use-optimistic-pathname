@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Link } from "./link";
+import Nav from "./nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,21 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="flex gap-2 m-2">
-          {[
-            { href: "/", label: "Home" },
-            { href: "/page-1", label: "Page 1" },
-            { href: "/page-2", label: "Page 2" },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              className="data-[optimistic=activating]:text-blue-500 px-3 py-2 rounded data-[state=active]:bg-blue-500 data-[state=active]:text-white"
-              href={link.href}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <Nav />
 
         <main className="m-4">{children}</main>
       </body>

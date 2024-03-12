@@ -1,9 +1,10 @@
 "use client";
 
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ComponentPropsWithoutRef,
+  startTransition,
   useEffect,
   useState,
   useSyncExternalStore,
@@ -15,15 +16,26 @@ export function Link({
   ...rest
 }: ComponentPropsWithoutRef<typeof NextLink>) {
   const pathname = usePathname();
-  const state = pathname === href ? "active" : "inactive";
+  const router = useRouter();
+  const optimisticUrl = useSyncExternalStore(
+    optimsticUrlStore.subscribe,
+    optimsticUrlStore.getSnapshot,
+    () => pathname
+  );
 
-  const { optimisticPathname, updateOptimisticUrl } = useOptimisticPathname();
-  const optimisticState =
-    optimisticPathname && state === "active"
-      ? "deactivating"
-      : optimisticPathname === href
-      ? "activating"
-      : undefined;
+  let state = pathname === href ? "active" : "inactive";
+
+  // works for optimisticState
+  let optimisticState;
+  let debouncedOptimisticUrl = useDebounced(optimisticUrl, 60);
+  let isTransitioning =
+    pathname !== optimisticUrl && pathname !== debouncedOptimisticUrl;
+
+  if (isTransitioning && optimisticUrl === href) {
+    optimisticState = "activating";
+  } else if (isTransitioning && pathname === href) {
+    optimisticState = "deactivating";
+  }
 
   return (
     <NextLink
@@ -31,47 +43,30 @@ export function Link({
       // data-state={state}
       // data-optimistic={optimisticState}
       onClick={(event) => {
+        // if is unmodified left click
         if (event.button === 0 && !event.metaKey && !event.ctrlKey) {
-          updateOptimisticUrl(`${href}`);
+          event.preventDefault();
+          startTransition(() => {
+            optimsticUrlStore.updateOptimsticUrl(`${href}`);
+            router.push(`${href}`);
+          });
         }
       }}
       href={href}
     >
       {children}
       <span className="block w-20">&nbsp;{state}</span>
-      {/* <span className="block w-20">&nbsp;{optimisticPathname}</span> */}
       <span className="block w-20">&nbsp;{optimisticState}</span>
     </NextLink>
   );
 }
 
-function useOptimisticPathname() {
-  const pathname = usePathname();
-  const optimisticUrl = useSyncExternalStore(
-    optimsticUrlStore.subscribe,
-    optimsticUrlStore.getSnapshot,
-    () => pathname
-  );
-
-  const debouncedOptimisticUrl = useDebounced(optimisticUrl, 100);
-  const isTransitioning =
-    pathname !== optimisticUrl && pathname !== debouncedOptimisticUrl;
-
-  let optimisticPathname = isTransitioning ? debouncedOptimisticUrl : undefined;
-
-  return {
-    optimisticPathname,
-    updateOptimisticUrl: optimsticUrlStore.updateOptimisticUrl,
-  };
-}
-
-let optimisticUrlState =
-  typeof window !== undefined && window.location.pathname;
+let optimisticUrl = "/";
 let listeners: (() => void)[] = [];
 
 const optimsticUrlStore = {
-  updateOptimisticUrl(url: string) {
-    optimisticUrlState = url;
+  updateOptimsticUrl(url: string) {
+    optimisticUrl = url;
     for (let listener of listeners) {
       listener();
     }
@@ -83,7 +78,7 @@ const optimsticUrlStore = {
     };
   },
   getSnapshot() {
-    return optimisticUrlState;
+    return optimisticUrl;
   },
 };
 

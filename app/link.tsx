@@ -38,7 +38,7 @@ export function Link({
     >
       {children}
       <span className="block w-20">&nbsp;{state}</span>
-      <span className="block w-20">&nbsp;{optimisticPathname}</span>
+      {/* <span className="block w-20">&nbsp;{optimisticPathname}</span> */}
       <span className="block w-20">&nbsp;{optimisticState}</span>
     </NextLink>
   );

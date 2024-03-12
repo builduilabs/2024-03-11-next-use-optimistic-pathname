@@ -69,6 +69,12 @@ let optimisticUrlState =
   typeof window !== undefined && window.location.pathname;
 let listeners: (() => void)[] = [];
 
+if (typeof window !== undefined) {
+  window.addEventListener("popstate", () => {
+    optimsticUrlStore.updateOptimisticUrl(location.pathname);
+  });
+}
+
 const optimsticUrlStore = {
   updateOptimisticUrl(url: string) {
     optimisticUrlState = url;

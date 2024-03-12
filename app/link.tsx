@@ -25,18 +25,26 @@ export function Link({
 
   let state = pathname === href ? "active" : "inactive";
 
-  // But if we're transitioning...
-  if (pathname !== optimisticUrl) {
-    if (optimisticUrl === href) {
-      state = "optimistic";
-    } else if (pathname === href) {
-      state = "deactivating";
-    } else {
-      state = "inactive";
-    }
+  let optimisticState;
+  let debouncedOptimisticUrl = useDebounced(optimisticUrl, 60);
+  let isTransitioning =
+    pathname !== optimisticUrl && pathname !== debouncedOptimisticUrl;
+
+  if (isTransitioning && optimisticUrl === href) {
+    optimisticState = "activating";
+  } else if (isTransitioning && pathname === href) {
+    optimisticState = "deactivating";
   }
 
-  state = useDebounced(state, 60);
+  // if (isTransitioning) {
+  //   if (optimisticUrl === href) {
+  //     optimisticState = "optimistic";
+  //   } else if (pathname === href) {
+  //     optimisticState = "deactivating";
+  //   }
+  // }
+
+  // optimisticState = useDebounced(optimisticState, 60);
 
   // works
   // let state;
@@ -104,7 +112,7 @@ export function Link({
   return (
     <NextLink
       {...rest}
-      data-state={state}
+      // data-state={state}
       onClick={(event) => {
         // if is unmodified left click
         if (event.button === 0 && !event.metaKey && !event.ctrlKey) {
@@ -118,7 +126,8 @@ export function Link({
       href={href}
     >
       {children}
-      {/* <span className="block w-16">{state}</span> */}
+      <span className="block w-16">&nbsp;{state}</span>
+      <span className="block w-16">&nbsp;{optimisticState}</span>
     </NextLink>
   );
 }

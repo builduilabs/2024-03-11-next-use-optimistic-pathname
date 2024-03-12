@@ -18,6 +18,7 @@ export function Link({
   const state = pathname === href ? "active" : "inactive";
 
   const { optimisticPathname, updateOptimisticUrl } = useOptimisticPathname();
+
   const optimisticState =
     optimisticPathname && state === "active"
       ? "deactivating"
@@ -28,10 +29,8 @@ export function Link({
   return (
     <NextLink
       {...rest}
-      // data-state={state}
-      // data-optimistic={optimisticState}
       onClick={(event) => {
-        if (event.button === 0 && !event.metaKey && !event.ctrlKey) {
+        if (!isModifiedEvent(event)) {
           updateOptimisticUrl(`${href}`);
         }
       }}
@@ -39,7 +38,7 @@ export function Link({
     >
       {children}
       <span className="block w-20">&nbsp;{state}</span>
-      {/* <span className="block w-20">&nbsp;{optimisticPathname}</span> */}
+      <span className="block w-20">&nbsp;{optimisticPathname}</span>
       <span className="block w-20">&nbsp;{optimisticState}</span>
     </NextLink>
   );
@@ -107,4 +106,17 @@ function useDebounced(value: any, timeout: number) {
   }, [value, timeout]);
 
   return debouncedValue;
+}
+
+function isModifiedEvent(event: React.MouseEvent): boolean {
+  const eventTarget = event.currentTarget as HTMLAnchorElement | SVGAElement;
+  const target = eventTarget.getAttribute("target");
+  return (
+    (target && target !== "_self") ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey || // triggers resource download
+    (event.nativeEvent && event.nativeEvent.which === 2)
+  );
 }

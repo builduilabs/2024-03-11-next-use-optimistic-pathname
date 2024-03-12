@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import URLBar from "./components/url-bar";
 import "./globals.css";
 import Nav from "./nav";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-gray-800 text-gray-200">
       <body className={inter.className}>
-        <URLBar />
+        <Suspense>
+          <URLBar />
+        </Suspense>
         <div className="m-6">
           <Nav />
 

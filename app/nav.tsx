@@ -23,7 +23,7 @@ export default function Nav() {
               updateOptimisticUrl(link.href);
             }
           }}
-          className={`px-3 py-2 border-b-4 
+          className={`px-3 py-2 border-b-4
             ${
               !optimisticPathname && pathname === link.href
                 ? "border-green-500"

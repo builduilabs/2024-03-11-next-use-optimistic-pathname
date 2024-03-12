@@ -10,7 +10,7 @@ export default function Nav() {
   const { optimisticPathname, updateOptimisticUrl } = useOptimisticPathname();
 
   return (
-    <nav className="flex gap-2 m-2 border border-gray-600 p-2">
+    <nav className="flex gap-2 border border-dashed border-gray-600 p-2">
       {[
         { href: "/", label: "Home" },
         { href: "/page-1", label: "Page 1" },

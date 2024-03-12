@@ -3,3 +3,5 @@ export default async function Page() {
 
   return <p>Page 2</p>;
 }
+
+export const dynamic = "force-dynamic";

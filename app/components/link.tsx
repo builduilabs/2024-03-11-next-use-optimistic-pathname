@@ -3,8 +3,8 @@
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { ComponentPropsWithoutRef } from "react";
-import isModifiedEvent from "./is-modified-event";
-import useOptimisticPathname from "./use-optimistic-pathname";
+import isModifiedEvent from "../is-modified-event";
+import useOptimisticPathname from "../use-optimistic-pathname";
 
 export function Link({
   href,

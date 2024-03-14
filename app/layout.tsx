@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import URLBar from "./components/url-bar";
 import "./globals.css";
-import Nav from "./nav";
 import { Suspense } from "react";
+import { OptimisticLink } from "./optimistic-link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,8 +23,13 @@ export default function RootLayout({
         <Suspense>
           <URLBar />
         </Suspense>
+
         <div className="m-6">
-          <Nav />
+          <nav className="flex gap-2 border border-dashed border-gray-600 p-2">
+            <OptimisticLink href="/">Home</OptimisticLink>
+            <OptimisticLink href="/page-1">Page 1</OptimisticLink>
+            <OptimisticLink href="/page-2">Page 2</OptimisticLink>
+          </nav>
 
           <main className="mt-4">{children}</main>
         </div>

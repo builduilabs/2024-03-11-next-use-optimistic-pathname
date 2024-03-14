@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import useOptimisticPathname from "./use-optimistic-pathname";
-import isModifiedEvent from "./is-modified-event";
+import useOptimisticPathname from "../use-optimistic-pathname";
+import isModifiedEvent from "../is-modified-event";
 import { usePathname } from "next/navigation";
 
 export default function Nav() {
